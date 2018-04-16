@@ -12,32 +12,75 @@
 
       <script type='text/babel'>
 
-        const name = 'James'
-        const handle = "@jimmysanfrancisco"
+      function FriendsList (props) {
+        return (
+          <ul>
+            {props.list.map((name) => (
+              <li key={name}>
+                <span>{name}</span>
+              <button onClick={() => props.onRemoveFriend(name)}>Remove</button>
+              </li>
+            ))}
+          </ul>
+        )
+      }
 
-        function NameComponent (props) {
-          return <h1>{props.name}</h1>
+      class App extends React.Component {
+        constructor(props) {
+          super(props)
+          this.state = {
+            friends: ['Jim', 'Jimmy', 'James'],
+            input: '',
+          }
+          this.handleRemoveFriend = this.handleRemoveFriend.bind(this)
+          this.updateInput = this.updateInput.bind(this)
+          this.handleAddFriend = this.handleAddFriend.bind(this)
         }
-
-        function HandleComponent (props) {
-          return <h3>{props.handle}</h3>
+        handleAddFriend() {
+          this.setState((currentState) => {
+            return {
+              friends: currentState.friends.concat([this.state.input]),
+              input: '',
+            }
+          })
         }
-
-        function App () {
+        handleRemoveFriend(name) {
+          this.setState((currentState) => {
+            return {
+              friends: currentState.friends.filter((friend) => friend !== name)
+            }
+          })
+        }
+        updateInput(e) {
+          const value = e.target.value
+          this.setState({
+            input: value
+          })
+        }
+        render() {
           return (
-            <div id='container'>
-              <NameComponent name={name} />
-              <HandleComponent handle={handle} />
-            </div>
-
+              <div>
+                <input
+                  type='text'
+                  placeholder='new friend'
+                  value={this.state.input}
+                  onChange={this.updateInput}
+                />
+              <button onClick={this.handleAddFriend}>Submit</button>
+                <FriendsList
+                  list={this.state.friends}
+                  onRemoveFriend={this.handleRemoveFriend}
+                />
+              </div>
           )
         }
+      }
+
 
         ReactDOM.render(
         <App />,
         document.getElementById('app')
         )
-
       </script>
     </body>
   </html>
