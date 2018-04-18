@@ -9,7 +9,33 @@
 <body>
   <div id='app'></div>
 
+  <script>
+    window.API = {
+      fetchFriends() {
+        return new Promise((res, rej) => {
+          const friends = [
+            {
+              name: 'Jordyn',
+              active: true,
+            },
+            {
+              name: 'Mikenzi',
+              active: true,
+            },
+            {
+              name: 'Jake',
+              active: false
+            }
+          ]
+
+          setTimeout(() => res(friends), 2000)
+        })
+      }
+    }
+  </script>
+
   <script type='text/babel'>
+
     function ActiveFriends (props) {
       return (
         <div>
@@ -45,26 +71,34 @@
       constructor(props) {
         super(props)
         this.state = {
-          friends: [
-            {
-              name: 'Jordyn',
-              active: true,
-            },
-            {
-              name: 'Mikenzi',
-              active: true,
-            },
-            {
-              name: 'Jake',
-              active: false
-            }
-          ],
+          friends: [],
           input: '',
+          loading: true
         }
         this.handleRemoveFriend = this.handleRemoveFriend.bind(this)
         this.updateInput = this.updateInput.bind(this)
         this.handleAddFriend = this.handleAddFriend.bind(this)
         this.handleToggleFriend = this.handleToggleFriend.bind(this)
+
+        console.log('---constructor---')
+      }
+      //called whenever the component is mounted into the DOM
+      componentDidMount() {
+        console.log('---comp did mount---')
+
+        API.fetchFriends()
+          .then((friends) => {
+            this.setState({
+              friends,
+              loading: false
+            })
+        })
+      }
+      componentDidUpdate() {
+        console.log('---comp did update')
+      }
+      componentWillUnmount() {
+        console.log('---comp will unmount')
       }
       handleAddFriend() {
         this.setState((currentState) => {
@@ -100,9 +134,15 @@
         const value = e.target.value
         this.setState({
           input: value
+
         })
       }
       render() {
+        console.log('--render--')
+
+        if (this.state.loading === true) {
+          return <h1>LOADING...</h1>
+        }
         return (
           <div>
             <input
